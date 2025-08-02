@@ -1,126 +1,101 @@
--- SERVICES
 local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
 
--- SAFE GUI SETUP
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "FreezeTraderUI"
+-- Create GUI
+local screenGui = Instance.new("ScreenGui", game.Players.LocalPlayer:WaitForChild("PlayerGui"))
+screenGui.Name = "FreezeTradeGUI"
 screenGui.ResetOnSpawn = false
-screenGui.Parent = playerGui
 
--- MAIN FRAME
-local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 250, 0, 140)
-mainFrame.Position = UDim2.new(0.5, -125, 0.6, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 350, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -175, 0.5, -150)
+mainFrame.BackgroundColor3 = Color3.fromRGB(46, 26, 71) -- Dark violet
 mainFrame.BorderSizePixel = 0
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 mainFrame.Active = true
 mainFrame.Draggable = true
-mainFrame.Parent = screenGui
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0, 16)
 
--- FREEZE BUTTON
-local freezeBtn = Instance.new("TextButton")
-freezeBtn.Size = UDim2.new(0, 200, 0, 35)
-freezeBtn.Position = UDim2.new(0.5, -100, 0, 10)
-freezeBtn.Text = "❄ Freeze"
-freezeBtn.BackgroundColor3 = Color3.fromRGB(20, 150, 255)
-freezeBtn.TextColor3 = Color3.new(1, 1, 1)
-freezeBtn.TextScaled = true
-freezeBtn.Font = Enum.Font.FredokaOne
-freezeBtn.Parent = mainFrame
+-- Title Bar
+local title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.BackgroundColor3 = Color3.fromRGB(167, 139, 250) -- Soft lilac
+title.Text = "🦖 Grow A Garden Freeze Trade"
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.TextSize = 16
+title.BorderSizePixel = 0
+Instance.new("UICorner", title).CornerRadius = UDim.new(0, 12)
 
--- PET SLOT DISPLAY
-local slotFrame = Instance.new("Frame")
-slotFrame.Size = UDim2.new(0, 200, 0, 60)
-slotFrame.Position = UDim2.new(0.5, -100, 0, 55)
-slotFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-slotFrame.BorderSizePixel = 0
-slotFrame.Visible = false
-slotFrame.Parent = mainFrame
+-- Instruction Label
+local instruction = Instance.new("TextLabel", mainFrame)
+instruction.Size = UDim2.new(1, -20, 0, 30)
+instruction.Position = UDim2.new(0, 10, 0, 50)
+instruction.BackgroundTransparency = 1
+instruction.Text = "Find Player to Freeze Trade"
+instruction.Font = Enum.Font.GothamBold
+instruction.TextColor3 = Color3.fromRGB(200, 175, 255)
+instruction.TextSize = 14
+instruction.TextXAlignment = Enum.TextXAlignment.Left
 
-local grid = Instance.new("UIGridLayout")
-grid.FillDirection = Enum.FillDirection.Horizontal
-grid.CellSize = UDim2.new(0, 50, 0, 50)
-grid.CellPadding = UDim.new(0, 10, 0, 0)
-grid.Parent = slotFrame
+-- Input
+local userBox = Instance.new("TextBox", mainFrame)
+userBox.Size = UDim2.new(0.7, -10, 0, 30)
+userBox.Position = UDim2.new(0.05, 0, 0, 90)
+userBox.PlaceholderText = "Enter username"
+userBox.Font = Enum.Font.Gotham
+userBox.TextSize = 14
+userBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+userBox.BackgroundColor3 = Color3.fromRGB(245, 240, 255)
+Instance.new("UICorner", userBox).CornerRadius = UDim.new(0, 8)
 
--- CREDIT
-local credit = Instance.new("TextLabel")
-credit.Size = UDim2.new(1, -10, 0, 20)
-credit.Position = UDim2.new(0, 5, 1, -25)
-credit.Text = "Made by Zeno"
-credit.BackgroundTransparency = 1
-credit.TextColor3 = Color3.fromRGB(200, 200, 200)
-credit.TextXAlignment = Enum.TextXAlignment.Right
-credit.Font = Enum.Font.GothamBold
-credit.TextScaled = true
-credit.Parent = mainFrame
+-- Search button
+local searchBtn = Instance.new("TextButton", mainFrame)
+searchBtn.Size = UDim2.new(0.25, 0, 0, 30)
+searchBtn.Position = UDim2.new(0.72, 0, 0, 90)
+searchBtn.Text = "Search"
+searchBtn.Font = Enum.Font.GothamBold
+searchBtn.TextSize = 14
+searchBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+searchBtn.BackgroundColor3 = Color3.fromRGB(167, 139, 250)
+Instance.new("UICorner", searchBtn).CornerRadius = UDim.new(0, 8)
 
--- FREEZE LOGIC
-local frozen = false
+-- Result Label
+local resultLabel = Instance.new("TextLabel", mainFrame)
+resultLabel.Size = UDim2.new(0.9, 0, 0, 40)
+resultLabel.Position = UDim2.new(0.05, 0, 0, 140)
+resultLabel.Text = ""
+resultLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+resultLabel.TextSize = 16
+resultLabel.Font = Enum.Font.GothamMedium
+resultLabel.BackgroundColor3 = Color3.fromRGB(120, 90, 180)
+Instance.new("UICorner", resultLabel).CornerRadius = UDim.new(0, 8)
+
+-- Freeze Button
+local freezeBtn = Instance.new("TextButton", mainFrame)
+freezeBtn.Size = UDim2.new(0.9, 0, 0, 40)
+freezeBtn.Position = UDim2.new(0.05, 0, 1, -50)
+freezeBtn.Text = "FREEZE TRADE"
+freezeBtn.Font = Enum.Font.GothamBold
+freezeBtn.TextSize = 16
+freezeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+freezeBtn.BackgroundColor3 = Color3.fromRGB(167, 139, 250)
+Instance.new("UICorner", freezeBtn).CornerRadius = UDim.new(0, 12)
+
+-- Functionality
+searchBtn.MouseButton1Click:Connect(function()
+	local name = userBox.Text
+	local target = Players:FindFirstChild(name)
+	if target then
+		resultLabel.Text = name
+	else
+		resultLabel.Text = "Player not found"
+	end
+end)
 
 freezeBtn.MouseButton1Click:Connect(function()
-	if frozen then return end
-	frozen = true
-	freezeBtn.Text = "✅ Frozen"
-	slotFrame.Visible = true
-
-	-- Detect trade GUI
-	local tradeGui
-	for _, v in ipairs(playerGui:GetDescendants()) do
-		if v:IsA("Frame") and v.Visible and v.Name:lower():find("trade") then
-			tradeGui = v
-			break
-		end
-	end
-
-	if not tradeGui then
-		warn("❌ Trade GUI not found.")
-		return
-	end
-
-	-- Detect opponent pet buttons
-	local opponentFrame
-	for _, v in ipairs(tradeGui:GetDescendants()) do
-		if v:IsA("Frame") and v.Visible and v.Name:lower():find("other") then
-			opponentFrame = v
-			break
-		end
-	end
-
-	if not opponentFrame then
-		warn("❌ Opponent pet frame not found.")
-		return
-	end
-
-	local shown = 0
-	for _, petBtn in ipairs(opponentFrame:GetChildren()) do
-		if (petBtn:IsA("TextButton") or petBtn:IsA("ImageButton")) and shown < 3 then
-			petBtn.AutoButtonColor = false
-			petBtn.Active = false
-			petBtn.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
-
-			local slot = Instance.new("Frame")
-			slot.Size = UDim2.new(0, 50, 0, 50)
-			slot.BackgroundColor3 = Color3.fromRGB(90, 90, 90)
-			slot.Parent = slotFrame
-
-			local label = Instance.new("TextLabel", slot)
-			label.Size = UDim2.new(1, 0, 1, 0)
-			label.BackgroundTransparency = 1
-			label.TextColor3 = Color3.new(1, 1, 1)
-			label.TextScaled = true
-			label.Font = Enum.Font.GothamBold
-
-			local petName = petBtn:FindFirstChildWhichIsA("TextLabel")
-			if petName then
-				label.Text = petName.Text
-			else
-				label.Text = "Pet"
-			end
-
-			shown += 1
-		end
+	local name = resultLabel.Text
+	if name ~= "" and Players:FindFirstChild(name) then
+		-- Add your Freeze logic here
+		warn("Freeze trade on player:", name)
 	end
 end)
